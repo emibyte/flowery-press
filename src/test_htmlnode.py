@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -40,6 +40,31 @@ class TestHTMLNode(unittest.TestCase):
         )
         expected = "HTMLNode(tag: p, value: this is a value, children: [HTMLNode(tag: None, value: None, children: None, props: None)], props: {'test': 'result1', 'class': 'paragraph-text', 'background': 'blue'})"
         self.assertEqual(node.__repr__(), expected)
+
+    def test_leaf_to_html_p_no_attribs(self):
+        node = LeafNode("p", "Hello world!")
+        self.assertEqual(node.to_html(), "<p>Hello world!</p>")
+
+    def test_leaf_to_html_p_with_attribs(self):
+        node = LeafNode(
+            "p", "Hello world!", {"class": "testimonial", "foreground": "pink"}
+        )
+        self.assertEqual(
+            node.to_html(), '<p class="testimonial" foreground="pink">Hello world!</p>'
+        )
+
+    def test_leaf_to_html_a(self):
+        node = LeafNode("a", "Home", {"href": "index.html"})
+        self.assertEqual(node.to_html(), '<a href="index.html">Home</a>')
+
+    def test_leaf_to_html_b(self):
+        node = LeafNode("b", "This is some bold text")
+        self.assertEqual(node.to_html(), "<b>This is some bold text</b>")
+
+    def test_leaf_to_html_no_tag(self):
+        node = LeafNode(None, "Some text")
+        self.assertEqual(node.to_html(), node.value)
+
 
 if __name__ == "__main__":
     unittest.main()
