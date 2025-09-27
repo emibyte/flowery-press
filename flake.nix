@@ -14,12 +14,14 @@
       devShells = forEachSupportedSystem ({ pkgs }: {
         default = pkgs.mkShell {
           packages = with pkgs; [
-            ruff
+
+            python313
             python3Packages.python-lsp-server
+	    black
 
             # LSP server plugins of interest:
             python3Packages.pylsp-mypy
-            python3Packages.python-lsp-ruff
+            # python3Packages.python-lsp-ruff
           ];
         };
       });
