@@ -75,8 +75,10 @@ class TestHTMLNode(unittest.TestCase):
                 LeafNode(None, "Normal text"),
             ],
         )
-        self.assertEqual(node.to_html(),
-                         "<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>")
+        self.assertEqual(
+            node.to_html(),
+            "<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>",
+        )
 
     def test_to_html_with_single_child(self):
         child_node = LeafNode("span", "child")
