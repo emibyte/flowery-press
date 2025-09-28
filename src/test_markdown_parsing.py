@@ -1,7 +1,11 @@
 import unittest
 
 from textnode import TextNode, TextType
-from markdown_parsing import split_nodes_delimiter
+from markdown_parsing import (
+    split_nodes_delimiter,
+    extract_markdown_images,
+    extract_markdown_links,
+)
 
 
 class TestMarkdownParsing(unittest.TestCase):
@@ -65,6 +69,46 @@ class TestMarkdownParsing(unittest.TestCase):
                 TextNode("This is bold text", TextType.BOLD),
                 TextNode(" and maybe there's also something ", TextType.PLAIN),
                 TextNode("italic at the end", TextType.ITALIC),
+            ],
+        )
+
+    def test_extracting_images(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        self.assertListEqual(
+            extract_markdown_images(text),
+            [
+                ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
+                ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg"),
+            ],
+        )
+
+    def test_extracting_links(self):
+        text = "This is text with a link [to google](https://www.google.com) and [to youtube](https://www.youtube.com)"
+        self.assertListEqual(
+            extract_markdown_links(text),
+            [
+                ("to google", "https://www.google.com"),
+                ("to youtube", "https://www.youtube.com"),
+            ],
+        )
+
+    def test_extracting_links_when_images_also_present(self):
+        text = "This is text containing a link [to google](https://www.google.com) and an image ![rick roll](https://i.imgur.com/aKaOqIh.gif) and another link [to youtube](https://www.youtube.com) and another image ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        self.assertListEqual(
+            extract_markdown_links(text),
+            [
+                ("to google", "https://www.google.com"),
+                ("to youtube", "https://www.youtube.com"),
+            ],
+        )
+
+    def test_extracting_images_when_links_also_present(self):
+        text = "This is text containing a link [to google](https://www.google.com) and an image ![rick roll](https://i.imgur.com/aKaOqIh.gif) and another link [to youtube](https://www.youtube.com) and another image ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        self.assertListEqual(
+            extract_markdown_images(text),
+            [
+                ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
+                ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg"),
             ],
         )
 
