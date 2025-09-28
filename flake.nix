@@ -16,12 +16,8 @@
           packages = with pkgs; [
 
             python313
-            python3Packages.python-lsp-server
-	    black
-
-            # LSP server plugins of interest:
-            python3Packages.pylsp-mypy
-            # python3Packages.python-lsp-ruff
+            black
+            pyright
           ];
         };
       });
