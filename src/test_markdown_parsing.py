@@ -3,6 +3,8 @@ import unittest
 from textnode import TextNode, TextType
 from markdown_parsing import (
     split_nodes_delimiter,
+    split_nodes_image,
+    split_nodes_link,
     extract_markdown_images,
     extract_markdown_links,
 )
@@ -110,6 +112,56 @@ class TestMarkdownParsing(unittest.TestCase):
                 ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
                 ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg"),
             ],
+        )
+
+    def test_split_nodes_images(self):
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.PLAIN,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.PLAIN),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.PLAIN),
+                TextNode(
+                    "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ],
+            new_nodes,
+        )
+
+    def test_split_nodes_images_same_one_twice(self):
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and the same ![image](https://i.imgur.com/zjjcJKZ.png)",
+            TextType.PLAIN,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.PLAIN),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and the same ", TextType.PLAIN),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+            ],
+            new_nodes,
+        )
+
+    def test_split_nodes_links(self):
+        node = TextNode(
+            "This is text with a [link](https://www.google.com) and another [second link](https://www.example.com)",
+            TextType.PLAIN,
+        )
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with a ", TextType.PLAIN),
+                TextNode("link", TextType.LINK, "https://www.google.com"),
+                TextNode(" and another ", TextType.PLAIN),
+                TextNode("second link", TextType.LINK, "https://www.example.com"),
+            ],
+            new_nodes,
         )
 
 

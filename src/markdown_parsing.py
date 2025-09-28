@@ -39,3 +39,37 @@ def extract_markdown_links(text: str) -> list[tuple[str, str]]:
     #       (?<!x) is negative lookbehind to make sure we dont match on images and treat them as links
     regex = r"(?<!!)\[(.*?)\]\((.*?)\)"
     return re.findall(regex, text)
+
+
+def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.PLAIN:
+            new_nodes.append(node)
+            continue
+        matches = extract_markdown_images(node.text)
+        text_left = node.text
+        for alt_text, url in matches:
+            image = f"![{alt_text}]({url})"
+            head, rest = text_left.split(image, maxsplit=1)
+            new_nodes.append(TextNode(head, TextType.PLAIN))
+            new_nodes.append(TextNode(alt_text, TextType.IMAGE, url))
+            text_left = rest
+    return new_nodes
+
+
+def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.PLAIN:
+            new_nodes.append(node)
+            continue
+        matches = extract_markdown_links(node.text)
+        text_left = node.text
+        for text, url in matches:
+            link = f"[{text}]({url})"
+            head, rest = text_left.split(link, maxsplit=1)
+            new_nodes.append(TextNode(head, TextType.PLAIN))
+            new_nodes.append(TextNode(text, TextType.LINK, url))
+            text_left = rest
+    return new_nodes
