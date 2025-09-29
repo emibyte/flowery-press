@@ -12,7 +12,7 @@ class TextType(Enum):
 
 
 class TextNode:
-    def __init__(self, text, text_type, url=None):
+    def __init__(self, text: str, text_type: TextType, url: str | None = None):
         self.text = text
         self.text_type = text_type
         self.url = url
@@ -39,8 +39,10 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
         case TextType.CODE:
             return LeafNode("code", text_node.text)
         case TextType.LINK:
+            assert text_node.url is not None
             return LeafNode("a", text_node.text, {"href": text_node.url})
         case TextType.IMAGE:
+            assert text_node.url is not None
             return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
         case _:
             raise ValueError(f"text type '{text_node.text_type}' not supported")
