@@ -1,9 +1,8 @@
-from textnode import TextNode, TextType
+from dump_files import move_all_files
 
 
 def main():
-    node = TextNode("some anchor text", TextType.LINK, "https://www.example.com")
-    print(node)
+    move_all_files("static", "public")
 
 
 main()
