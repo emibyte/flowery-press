@@ -14,10 +14,8 @@
       devShells = forEachSupportedSystem ({ pkgs }: {
         default = pkgs.mkShell {
           packages = with pkgs; [
-
             python313
             black
-            pyright
           ];
         };
       });
