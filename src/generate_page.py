@@ -49,7 +49,7 @@ def generate_pages_recursively(
         dest_file_path = os.path.join(dest_dir_path, file)
         if os.path.isfile(source_file_path):
             dest_file_path = dest_file_path.replace(".md", ".html")
-            generate_page(source_file_path, template_path, dest_file_path)
+            generate_page(source_file_path, template_path, dest_file_path, base_path)
         else:
-            generate_pages_recursively(source_file_path, template_path, dest_file_path)
+            generate_pages_recursively(source_file_path, template_path, dest_file_path, base_path)
     return
