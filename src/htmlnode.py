@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, override
 
 
 class HTMLNode:
@@ -25,6 +25,14 @@ class HTMLNode:
             html_string += f' {attrib}="{value}"'
         return html_string
 
+    def __eq__(self, other):
+        return (
+            self.tag == other.tag
+            and self.value == other.value
+            and self.children == other.children
+            and self.props == other.props
+        )
+
     def __repr__(self):
         return f"HTMLNode(tag: {self.tag}, value: {self.value}, children: {self.children}, props: {self.props})"
 
@@ -36,9 +44,9 @@ class LeafNode(HTMLNode):
         super().__init__(tag, value, None, props)
 
     def to_html(self):
-        if not self.value:
+        if self.value is None:
             raise ValueError("All leaf nodes must have a value.")
-        if not self.tag:
+        if self.tag is None:
             return self.value
 
         return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
@@ -68,4 +76,4 @@ class ParentNode(HTMLNode):
         return f"<{self.tag}{self.props_to_html()}>{child_html}</{self.tag}>"
 
     def __repr__(self):
-        return f"ParentNode(tag: {self.tag}, children: {self.children}, props: {self.props}"
+        return f"ParentNode(tag: {self.tag}, children: {self.children}, props: {self.props})"
