@@ -1,11 +1,13 @@
 import unittest
 
+from src.htmlnode import LeafNode, ParentNode
 from textnode import TextNode, TextType
 from markdown_parsing import (
     block_to_block_type,
     BlockType,
     markdown_to_blocks,
     markdown_to_html_node,
+    parse_unordered_list,
     split_nodes_delimiter,
     split_nodes_image,
     split_nodes_link,
@@ -162,6 +164,21 @@ class TestMarkdownParsing(unittest.TestCase):
         self.assertListEqual(
             [
                 TextNode("This is text with a ", TextType.PLAIN),
+                TextNode("link", TextType.LINK, "https://www.google.com"),
+                TextNode(" and another ", TextType.PLAIN),
+                TextNode("second link", TextType.LINK, "https://www.example.com"),
+            ],
+            new_nodes,
+        )
+
+    def test_split_nodes_links_link_at_start(self):
+        node = TextNode(
+            "[link](https://www.google.com) and another [second link](https://www.example.com)",
+            TextType.PLAIN,
+        )
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
                 TextNode("link", TextType.LINK, "https://www.google.com"),
                 TextNode(" and another ", TextType.PLAIN),
                 TextNode("second link", TextType.LINK, "https://www.example.com"),
@@ -370,6 +387,51 @@ the **same** even with inline stuff
         self.assertEqual(
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+        )
+
+    def test_list_html_nodes(self):
+        markdown = """
+- [Why Glorfindel is More Impressive than Legolas](/blog/glorfindel)
+- [Why Tom Bombadil Was a Mistake](/blog/tom)
+- [The Unparalleled Majesty of "The Lord of the Rings"](/blog/majesty)
+"""
+        self.assertEqual(
+            parse_unordered_list(markdown),
+            ParentNode(
+                "ul",
+                [
+                    ParentNode(
+                        "li",
+                        [
+                            LeafNode(
+                                "a",
+                                "Why Glorfindel is More Impressive than Legolas",
+                                {"href": "/blog/glorfindel"},
+                            )
+                        ],
+                    ),
+                    ParentNode(
+                        "li",
+                        [
+                            LeafNode(
+                                "a",
+                                "Why Tom Bombadil Was a Mistake",
+                                {"href": "/blog/tom"},
+                            )
+                        ],
+                    ),
+                    ParentNode(
+                        "li",
+                        [
+                            LeafNode(
+                                "a",
+                                'The Unparalleled Majesty of "The Lord of the Rings"',
+                                {"href": "/blog/majesty"},
+                            )
+                        ],
+                    ),
+                ],
+            ),
         )
 
 
