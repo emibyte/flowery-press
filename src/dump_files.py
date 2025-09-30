@@ -1,8 +1,12 @@
 import os
-from shutil import rmtree, copy
+from shutil import copy, rmtree
 
 
-def move_all_files(source_dir: str, dest_dir: str) -> None:
+def move_and_update_all_files(source_dir: str, dest_dir: str) -> None:
+    """
+    Delete dest_dir and recursively copy all contents from source_dir
+    to dest_dir.
+    """
     if not os.path.exists(source_dir):
         raise ValueError("source directory doesn't exist")
 
@@ -15,5 +19,5 @@ def move_all_files(source_dir: str, dest_dir: str) -> None:
         if os.path.isfile(from_path):
             copy(from_path, to_path)
         else:
-            move_all_files(from_path, to_path)
+            move_and_update_all_files(from_path, to_path)
     return
