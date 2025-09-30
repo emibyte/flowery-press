@@ -77,6 +77,8 @@ def parse_unordered_list(block: str) -> ParentNode:
     lines = block.split("\n")
     list_items = []
     for line in lines:
+        if not line.strip():
+            continue
         item = line[2:]
         text_nodes = text_to_textnodes(item)
         html_child_nodes = list(map(text_node_to_html_node, text_nodes))
@@ -88,6 +90,8 @@ def parse_ordered_list(block: str) -> ParentNode:
     lines = block.split("\n")
     list_items = []
     for line in lines:
+        if not line.strip():
+            continue
         item = line[3:]
         text_nodes = text_to_textnodes(item)
         html_child_nodes = list(map(text_node_to_html_node, text_nodes))
@@ -199,7 +203,8 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
         for alt_text, url in matches:
             image = f"![{alt_text}]({url})"
             head, rest = text_left.split(image, maxsplit=1)
-            new_nodes.append(TextNode(head, TextType.PLAIN))
+            if head:
+                new_nodes.append(TextNode(head, TextType.PLAIN))
             new_nodes.append(TextNode(alt_text, TextType.IMAGE, url))
             text_left = rest
         if len(text_left) > 0:
@@ -221,7 +226,8 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
         for text, url in matches:
             link = f"[{text}]({url})"
             head, rest = text_left.split(link, maxsplit=1)
-            new_nodes.append(TextNode(head, TextType.PLAIN))
+            if head:
+                new_nodes.append(TextNode(head, TextType.PLAIN))
             new_nodes.append(TextNode(text, TextType.LINK, url))
             text_left = rest
         if len(text_left) > 0:
