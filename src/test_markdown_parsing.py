@@ -391,9 +391,9 @@ the **same** even with inline stuff
 
     def test_list_html_nodes(self):
         markdown = """
-- [Why Glorfindel is More Impressive than Legolas](/blog/glorfindel)
-- [Why Tom Bombadil Was a Mistake](/blog/tom)
-- [The Unparalleled Majesty of "The Lord of the Rings"](/blog/majesty)
+- [first link to some thing](/some/thing)
+- [second link to another thing](/another/thing)
+- [i really dont know what i am evem "doing" here](/help/me)
 """
         self.assertEqual(
             parse_unordered_list(markdown),
@@ -405,8 +405,8 @@ the **same** even with inline stuff
                         [
                             LeafNode(
                                 "a",
-                                "Why Glorfindel is More Impressive than Legolas",
-                                {"href": "/blog/glorfindel"},
+                                "first link to some thing",
+                                {"href": "/some/thing"},
                             )
                         ],
                     ),
@@ -415,8 +415,8 @@ the **same** even with inline stuff
                         [
                             LeafNode(
                                 "a",
-                                "Why Tom Bombadil Was a Mistake",
-                                {"href": "/blog/tom"},
+                                "second link to another thing",
+                                {"href": "/another/thing"},
                             )
                         ],
                     ),
@@ -425,8 +425,8 @@ the **same** even with inline stuff
                         [
                             LeafNode(
                                 "a",
-                                'The Unparalleled Majesty of "The Lord of the Rings"',
-                                {"href": "/blog/majesty"},
+                                'i really dont know what i am evem "doing" here',
+                                {"href": "/help/me"},
                             )
                         ],
                     ),
